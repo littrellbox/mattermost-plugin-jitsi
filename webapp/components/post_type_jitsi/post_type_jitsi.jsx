@@ -53,6 +53,29 @@ export default class PostTypeJitsi extends React.PureComponent {
         };
     }
 
+    handleClick(url) {
+        if (document.getElementById("voicechat-window")) {
+            document.getElementById("voicechat-window").parentNode.removeChild(document.getElementById("voicechat-window"));
+        }
+        var newEl = document.createElement('div'); 
+        newEl.id = "voicechat-window"
+        newEl.style.position = "relative"; 
+        newEl.style.height = "50%"; 
+        newEl.style.width = "100%"; 
+        if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+            newEl.style.height = "100%";
+       }
+        newEl.innerHTML= "<iframe class='vcnotloaded' id='iframevc' src='" + url +"' frameborder='0' allowfullscreen allow='geolocation; microphone; camera' style='overflow:hidden;height:100%;width:100%' height='100%' width='100%' >"; 
+        document.getElementById('channel-header').parentNode.insertBefore( newEl, document.getElementById("post-list") );
+        document.getElementById('iframevc').addEventListener("load", function () {
+            if(document.getElementById('iframevc').className == "vcnotloaded") {
+                document.getElementById('iframevc').className = "vcloaded"
+            } else {
+                document.getElementById("voicechat-window").parentNode.removeChild(document.getElementById("voicechat-window"));
+            }
+        }, false);
+    }
+
     render() {
         const style = getStyle(this.props.theme);
         const post = this.props.post;
@@ -61,45 +84,36 @@ export default class PostTypeJitsi extends React.PureComponent {
         let preText;
         let content;
         let subtitle;
+        let jsonclick;
         if (props.meeting_status === 'STARTED') {
-            preText = `${this.props.creatorName} has started a meeting`;
+            preText = `${this.props.creatorName} has started a call`;
             content = (
                 <a
                     className='btn btn-lg btn-primary'
                     style={style.button}
-                    target='_blank'
-                    href={props.meeting_link}
+                    onClick={() => this.handleClick(props.meeting_link)}
+                    href='#'
                 >
                     <i
                         style={style.buttonIcon}
                         dangerouslySetInnerHTML={{__html: Svgs.VIDEO_CAMERA_3}}
                     />
-                    {'JOIN MEETING'}
+                    {'JOIN CALL'}
                 </a>
             );
 
             if (props.meeting_personal) {
                 subtitle = (
                     <span>
-                        {'Personal Meeting ID (PMI) : '}
-                        <a
-                            target='_blank'
-                            href={props.meeting_link}
-                        >
-                            {props.meeting_id}
-                        </a>
+                        {'Creator: '}
+                        {props.creatorName}
                     </span>
                 );
             } else {
                 subtitle = (
                     <span>
-                        {'Meeting ID : '}
-                        <a
-                            target='_blank'
-                            href={props.meeting_link}
-                        >
-                            {props.meeting_id}
-                        </a>
+                        {'Creator: '}
+                        {props.creatorName}
                     </span>
                 );
             }
@@ -107,9 +121,9 @@ export default class PostTypeJitsi extends React.PureComponent {
             preText = `${this.props.creatorName} has ended the meeting`;
 
             if (props.meeting_personal) {
-                subtitle = 'Personal Meeting ID (PMI) : ' + props.meeting_id;
+                subtitle = 'Creator: ' + props.creatorName;
             } else {
-                subtitle = 'Meeting ID : ' + props.meeting_id;
+                subtitle = 'Creator: ' + props.creatorName;
             }
 
             const startDate = new Date(post.create_at);
@@ -119,16 +133,16 @@ export default class PostTypeJitsi extends React.PureComponent {
             content = (
                 <div>
                     <h2 style={style.summary}>
-                        {'Meeting Summary'}
+                        {'Call Summary'}
                     </h2>
                     <span style={style.summaryItem}>{'Date: ' + start}</span>
                     <br/>
-                    <span style={style.summaryItem}>{'Meeting Length: ' + length + ' minute(s)'}</span>
+                    <span style={style.summaryItem}>{'Call Length: ' + length + ' minute(s)'}</span>
                 </div>
             );
         }
 
-        let title = 'Jitsi Meeting';
+        let title = 'Voice/Video Call';
         if (props.meeting_topic) {
             title = props.meeting_topic;
         }

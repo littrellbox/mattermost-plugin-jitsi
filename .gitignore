@@ -15,15 +15,18 @@
 
 # Build
 /coverage.txt
-/plugin.exe
 /mattermost-jitsi-plugin*.tar.gz
 /dist
 server/vendor
 node_modules
 .npminstall
 webapp/dist
+server/dist
 
 # Mac
 *.swp
 .DS_Store
 package-lock.json
+
+# VS Code
+.vscode

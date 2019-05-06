@@ -6,7 +6,7 @@ import {makeStyleFromTheme} from 'mattermost-redux/utils/theme_utils';
 export default class Icon extends React.PureComponent {
     render() {
         const style = getStyle();
-         return (
+        return (
             <span
                 style={style.iconStyle}
                 aria-hidden='true'
@@ -19,7 +19,7 @@ const getStyle = makeStyleFromTheme(() => {
     return {
         iconStyle: {
             position: 'relative',
-            top: '-1px',
+            top: '-1px'
         }
     };
 });

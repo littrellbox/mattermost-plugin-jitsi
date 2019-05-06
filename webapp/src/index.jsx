@@ -5,7 +5,7 @@ import React from 'react';
 
 import Icon from './components/icon.jsx';
 import PostTypeJitsi from './components/post_type_jitsi';
-import {startMeeting} from './actions'
+import {startMeeting} from './actions';
 
 class PluginClass {
     initialize(registry, store) {
@@ -16,7 +16,7 @@ class PluginClass {
             },
             'Start Jitsi Meeting'
         );
-        registry.registerPostTypeComponent('custom_jitsi', PostTypeJitsi)
+        registry.registerPostTypeComponent('custom_jitsi', PostTypeJitsi);
     }
 }
 

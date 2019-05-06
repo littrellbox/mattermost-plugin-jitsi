@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/mattermost/mattermost-server/model"
 	"github.com/mattermost/mattermost-server/plugin"
@@ -19,29 +20,20 @@ const (
 type Plugin struct {
 	plugin.MattermostPlugin
 
-	JitsiURL string
+	// configurationLock synchronizes access to the configuration.
+	configurationLock sync.RWMutex
+
+	// configuration is the active plugin configuration. Consult getConfiguration and
+	// setConfiguration for usage.
+	configuration *configuration
 }
 
-// func (p *Plugin) OnActivate() error {
-// 	if err := p.IsConfigurationValid(); err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-// func (p *Plugin) OnConfigurationChange() error {
-// 	if err := p.IsConfigurationValid(); err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-func (p *Plugin) IsConfigurationValid() error {
-	if len(p.JitsiURL) == 0 {
-		return fmt.Errorf("Jitsi URL is not configured")
+func (p *Plugin) OnActivate() error {
+	config := p.getConfiguration()
+	if err := config.IsValid(); err != nil {
+		return err
 	}
+
 	return nil
 }
 
@@ -70,7 +62,7 @@ func encodeJitsiMeetingID(meeting string) string {
 }
 
 func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
-	if err := p.IsConfigurationValid(); err != nil {
+	if err := p.getConfiguration().IsValid(); err != nil {
 		http.Error(w, err.Error(), http.StatusTeapot)
 		return
 	}
@@ -105,7 +97,8 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 	if len(req.Topic) < 1 {
 		meetingID = generateRoomWithoutSeparator()
 	}
-	jitsiURL := strings.TrimSpace(p.JitsiURL)
+	jitsiURL := strings.TrimSpace(p.getConfiguration().JitsiURL)
+	jitsiURL = strings.TrimRight(jitsiURL, "/")
 	meetingURL := jitsiURL + "/" + meetingID
 
 	post := &model.Post{
@@ -125,7 +118,7 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	if post, err := p.API.CreatePost(post); err != nil {
+	if _, err := p.API.CreatePost(post); err != nil {
 		http.Error(w, err.Error(), err.StatusCode)
 		return
 	} else {

@@ -104,7 +104,7 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 	post := &model.Post{
 		UserId:    user.Id,
 		ChannelId: req.ChannelId,
-		Message:   fmt.Sprintf("Meeting started at %s.", meetingURL),
+		Message:   fmt.Sprintf("Call started at %s.", meetingURL),
 		Type:      "custom_jitsi",
 		Props: map[string]interface{}{
 			"meeting_id":        meetingID,
@@ -113,7 +113,7 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 			"meeting_personal":  false,
 			"meeting_topic":     req.Topic,
 			"from_webhook":      "true",
-			"override_username": "Jitsi",
+			"override_username": "Voice Call",
 			"override_icon_url": "https://s3.amazonaws.com/mattermost-plugin-media/Zoom+App.png",
 		},
 	}

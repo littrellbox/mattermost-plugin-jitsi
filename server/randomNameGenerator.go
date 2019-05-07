@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -107,5 +108,5 @@ func randomElement(s []string) string {
 }
 
 func generateRoomWithoutSeparator() string {
-	return (randomElement(ADJECTIVE) + randomElement(PLURALNOUN) + randomElement(VERB) + randomElement(ADVERB))
+	return (strconv.Itoa(rand.Intn(2000000000)) + randomElement(ADJECTIVE) + randomElement(PLURALNOUN) + randomElement(VERB) + randomElement(ADVERB))
 }

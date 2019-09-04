@@ -56,26 +56,26 @@ export default class PostTypeJitsi extends React.PureComponent {
     handleClick(url) {
         //TODO: make it not this way, this is fucking stupid
 
-        if (document.getElementById("voicechat-window")) {
-            document.getElementById("voicechat-window").parentNode.removeChild(document.getElementById("voicechat-window"));
+        if (document.getElementById('voicechat-window')) {
+            document.getElementById('voicechat-window').parentNode.removeChild(document.getElementById('voicechat-window'));
         }
-        var newEl = document.createElement('div'); 
-        newEl.id = "voicechat-window"
-        newEl.style.position = "relative"; 
-        newEl.style.height = newEl.style.height = (window.innerHeight / 2) - 100 //work around firefox not understanding what "50%" means and chrome not understanding what "100%" means
-        newEl.style.width = "100%";
-        
+        var newEl = document.createElement('div');
+        newEl.id = 'voicechat-window';
+        newEl.style.position = 'relative';
+        newEl.style.height = "100%"; //thanks CSS for your infinite stupidity
+        newEl.style.width = '100%';
+
         //if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
         //    newEl.style.height = (window.innerHeight / 2) - 100
         //}
 
-        newEl.innerHTML= "<iframe class='vcnotloaded' id='iframevc' src='" + url +"' frameborder='0' allowfullscreen allow='geolocation; microphone; camera' style='overflow:hidden;height:100%;width:100%' height='100%' width='100%' >"; 
-        document.getElementById('channel-header').parentNode.insertBefore( newEl, document.getElementById("post-list") );
-        document.getElementById('iframevc').addEventListener("load", function () {
-            if(document.getElementById('iframevc').className == "vcnotloaded") {
-                document.getElementById('iframevc').className = "vcloaded"
+        newEl.innerHTML = "<iframe class='vcnotloaded' id='iframevc' src='" + url + "' frameborder='0' allowfullscreen allow='geolocation; microphone; camera' style='overflow:hidden;height:100%;width:100%' height='100%' width='100%' >";
+        document.getElementById('channel-header').parentNode.insertBefore(newEl, document.getElementById('post-list'));
+        document.getElementById('iframevc').addEventListener('load', () => {
+            if (document.getElementById('iframevc').className == 'vcnotloaded') {
+                document.getElementById('iframevc').className = 'vcloaded';
             } else {
-                document.getElementById("voicechat-window").parentNode.removeChild(document.getElementById("voicechat-window"));
+                document.getElementById('voicechat-window').parentNode.removeChild(document.getElementById('voicechat-window'));
             }
         }, false);
     }
